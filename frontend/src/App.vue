@@ -1,10 +1,9 @@
 <template>
   <div>
     <!-- route -->
-    <router-view>
-      <router-link to="/">Inicio</router-link> |
-      <router-link to="/points">Registrar Coordenadas</router-link>
-    </router-view>
+    <router-link to="/">Inicio</router-link> |
+    <router-link to="/points">Registrar Coordenadas</router-link>
+    <router-view></router-view>
   </div>
 </template>
 
