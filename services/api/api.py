@@ -1,12 +1,17 @@
 # API VRP Google.
+import os
 import googlemaps
 import pandas as pd
 import numpy as np
+from dotenv import load_dotenv;
+
+load_dotenv();
 
 def create_data():
     """Creates the data."""
     data = {}
-    data['API_key'] = 'AIzaSyBYEGtbRbSiHCjSkdR0yRtOVE_iyOAu9tQ'
+    # read api key from .env file
+    data['API_key'] = os.getenv('GOOGLE_API_KEY');
     data['addresses'] = [
         'Oregon+Foods+Planta',
         'Av.+Javier+Prado+Este+2010,+Lima+15036',  # La rambla
@@ -45,10 +50,10 @@ def main():
     
     # Guardar en .csv
     df = pd.DataFrame(distance_matrix);
-    df.to_csv('./data/distance_matrix.csv');
+    df.to_csv('./data/db/distance_matrix.csv');
     
     # Guardar en .txt
-    with open('./data/distance_matrix.txt', 'w') as file:
+    with open('./data/db/distance_matrix.txt', 'w') as file:
         for row in distance_matrix:
             file.write(' '.join([str(elem) for elem in row]) + '\n');
             file.write('\n');
