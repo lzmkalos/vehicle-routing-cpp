@@ -123,7 +123,7 @@ public:
 int main() {
 
     Graph g(5);
-    g.readFromFile("distance_matrix.txt");
+    g.readFromFile("./data/distance_matrix.txt");
     g.imprimir_grafo();
     g.tsp();
     g.generar_dot("graph.dot");
