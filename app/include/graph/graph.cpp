@@ -123,11 +123,11 @@ public:
 int main() {
 
     Graph g(5);
-    g.readFromFile("../data/db/distance_matrix.txt");
+    g.readFromFile("./data/db/distance_matrix.txt");
     g.imprimir_grafo();
     g.tsp();
-    g.generar_dot("../data/helpers/graph.dot");
+    g.generar_dot("./data/helpers/graph.dot");
 
-    system("dot -Tpng ../data/helpers/graph.dot -o ../data/images/graph.png");
+    system("dot -Tpng ./data/helpers/graph.dot -o ./data/images/graph.png");
     return 0;
 }
