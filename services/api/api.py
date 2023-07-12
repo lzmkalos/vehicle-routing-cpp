@@ -45,10 +45,10 @@ def main():
     
     # Guardar en .csv
     df = pd.DataFrame(distance_matrix);
-    df.to_csv('distance_matrix.csv');
+    df.to_csv('./data/distance_matrix.csv');
     
     # Guardar en .txt
-    with open('distance_matrix.txt', 'w') as file:
+    with open('./data/distance_matrix.txt', 'w') as file:
         for row in distance_matrix:
             file.write(' '.join([str(elem) for elem in row]) + '\n');
             file.write('\n');
