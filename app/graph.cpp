@@ -122,7 +122,7 @@ public:
 
 int main() {
 
-    Graph g(5);
+    Graph g(8);
     g.readFromFile("./data/db/distance_matrix.txt");
     g.imprimir_grafo();
     g.tsp();
