@@ -10,27 +10,37 @@ std::string API_KEY = "AIzaSyBYEGtbRbSiHCjSkdR0yRtOVE_iyOAu9tQ";
 void get_and_save_distances(const std::vector<std::string>& addresses){
     // Obtener la matriz de distancias
     std::vector<std::vector<int>> matrix;
+    std::vector<std::vector<int>> time_matrix;
+
     for (int i = 0; i < addresses.size(); i++) {
         std::vector<int> row;
+        std::vector<int> time_row;
+
         for (int j = 0; j < addresses.size(); j++) {
             if (i == j) {
                 row.push_back(0);
+                time_row.push_back(0);
             } else {
-                auto response = cpr::Get(cpr::Url{"https://maps.googleapis.com/maps/api/distancematrix/json"},
+                auto response = cpr::Get(cpr::Url{"https://maps.googleapis.com/maps/api/directions/json"},
                                         cpr::Parameters{
-                                            {"origins", addresses[i]},
-                                            {"destinations", addresses[j]},
+                                            {"origin", addresses[i]},
+                                            {"destination", addresses[j]},
                                             {"key", API_KEY}
                                         });
                 auto result = json::parse(response.text);
-                if (result["rows"][0]["elements"][0]["status"] == "OK") {
-                    row.push_back(result["rows"][0]["elements"][0]["distance"]["value"]);
+                if (result["status"] == "OK") {
+                    int distance = result["routes"][0]["legs"][0]["distance"]["value"];
+                    int duration = result["routes"][0]["legs"][0]["duration"]["value"];
+                    row.push_back(distance);
+                    time_row.push_back(duration);
                 } else {
                     row.push_back(INT_MAX);
+                    time_row.push_back(INT_MAX);
                 }
             }
         }
         matrix.push_back(row);
+        time_matrix.push_back(time_row);
     };
 
     // guardar la matriz de distancias en un archivo
@@ -41,7 +51,18 @@ void get_and_save_distances(const std::vector<std::string>& addresses){
         }
         file << '\n';
     }
-};
+    file.close();
+
+    // guardar la matriz de tiempos en un archivo
+    std::ofstream time_file("time_matrix.txt");
+    for (const auto& row : time_matrix) {
+        for (const auto& elem : row) {
+            time_file << elem << ' ';
+        }
+        time_file << '\n';
+    }
+    time_file.close();
+}
 
 int main() {
     crow::SimpleApp app;

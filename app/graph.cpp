@@ -11,10 +11,12 @@
 
 class Graph {
 private:
-    std::vector<std::vector<int>> lista_adyacencia;
+    std::vector<std::vector<int>> lista_adyacencia; //Matriz de adyacencia
+    std::vector<std::vector<int>> lista_tiempos;    //Matriz de tiempos
 public:
     // Constructor
-    Graph(int numero_nodos): lista_adyacencia(numero_nodos, std::vector<int>(numero_nodos, 1)) {};
+    Graph(int numero_nodos): lista_adyacencia(numero_nodos, std::vector<int>(numero_nodos, 1)),
+                            lista_tiempos(numero_nodos, std::vector<int>(numero_nodos, 1)) {};
 
     // Getters
     int get_peso(int nodo1, int nodo2) const {
@@ -59,6 +61,25 @@ public:
             }
             ++i;
         }
+        file.close();
+
+        //Leemos la matriz de tiempos desde el otro archivo
+        std::ifstream timeFile("./data/db/time_matrix.txt");
+        i = 0;
+        while (std::getline(timeFile, line)) {
+            // Ignorar las líneas en blanco
+            if (line.empty()) continue;
+
+            std::istringstream iss(line);
+            int j = 0;
+            int time;
+            while (iss >> time) {
+                lista_tiempos[i][j] = time;
+                ++j;
+            }
+            ++i;
+        }
+        timeFile.close();
     }
 
     // diagrama con graphviz
@@ -88,31 +109,48 @@ public:
         int camino_mas_corto = std::numeric_limits<int>::max();
         std::vector<int> ruta_mas_corta;
 
+        int camino_mas_rapido = std::numeric_limits<int>::max();
+        std::vector<int> ruta_mas_rapida;
+
         do {
             int camino_peso_actual = 0;
+            int camino_peso_rapido_actual = 0;
 
             int k = 0;
             for (int i = 0; i < vertice_inicial.size(); i++) {
                 camino_peso_actual += lista_adyacencia[k][vertice_inicial[i]];
+                camino_peso_rapido_actual += lista_tiempos[k][vertice_inicial[i]];
                 k = vertice_inicial[i];
             }
             camino_peso_actual += lista_adyacencia[k][0];
+            camino_peso_rapido_actual += lista_tiempos[k][0];
 
             if (camino_peso_actual < camino_mas_corto) {
                 camino_mas_corto = camino_peso_actual;
                 ruta_mas_corta = vertice_inicial;
             }
 
-        } while (std::next_permutation(vertice_inicial.begin(), vertice_inicial.end()));
+            if (camino_peso_rapido_actual < camino_mas_rapido) {
+                camino_mas_rapido = camino_peso_rapido_actual;
+                ruta_mas_rapida = vertice_inicial;
+            }
 
-        std::cout << "Camino mas corto con distancia: " << camino_mas_corto << '\n';
-        std::cout << "El camino es: 0 ";
-        for (int i : ruta_mas_corta) {
-            std::cout << "-> " << i;
-        }
-        std::cout << " -> 0\n";
+    } while (std::next_permutation(vertice_inicial.begin(), vertice_inicial.end()));
+
+    std::cout << "Camino mas corto con distancia: " << camino_mas_corto << '\n';
+    std::cout << "El camino es: 0 ";
+    for (int i : ruta_mas_corta) {
+        std::cout << "-> " << i;
     }
+    std::cout << " -> 0\n";
 
+    std::cout << "Camino mas rapido con tiempo: " << camino_mas_rapido << '\n';
+    std::cout << "El camino es: 0 ";
+    for (int i : ruta_mas_rapida) {
+        std::cout << "-> " << i;
+    }
+    std::cout << " -> 0\n";
+}
 };
 
 
